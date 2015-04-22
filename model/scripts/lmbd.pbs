@@ -1,0 +1,11 @@
+#PBS -q general
+#PBS -l nodes=1:ppn=8
+#PBS -m abe -M hugo.bowne-anderson@yale.edu
+cd $PBS_O_WORKDIR
+
+file="data/lymphoblast_mbuti.RData"
+id="lmbd"
+
+export PATH=/usr/local/cluster/software/installation/R/R-3.0.1/bin:$PATH
+Rscript ~/alt_all/rounds.R $file $id  2> $id".err"
+
