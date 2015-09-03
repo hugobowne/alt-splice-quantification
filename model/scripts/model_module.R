@@ -104,7 +104,7 @@ M3 <- function( data , par , xlim = c(0,0.5) , logy =TRUE){
   return( pmin1)
 }
 
-add_metrics <- function( mdf , i , model){
+add_metrics <- function( mdf , i , model, model_name){
   #i <- 5
   fn <- paste("../data/" , filenames[i] , ".RData" , sep = "")
   load( fn )
@@ -122,21 +122,22 @@ add_metrics <- function( mdf , i , model){
   
   #stat_density(as.matrix(m))
   
-  dens <- density(d$pmin ) #density of data and model
+  #dens <- density(d$pmin ) #density of data and model
   #plot( dens )
   
-  dhist <- hist(d$pmin) #data hist
-  mhist <- hist(m$pmin) #model hist
+  dhist <- hist(d$pmin , breaks = seq(0,0.5,0.01) ) #data hist
+  mhist <- hist(m$pmin , breaks = seq(0,0.5,0.01)) #model hist
   
+  #mo <- model
   
   dif <- sum((dhist$density - mhist$density)^2)/length(dhist$density)
-  mdf <- rbind( mdf , c( name[1] , "dif" , dif ))
+  mdf <- rbind( mdf , c( name[1] , "dif" , model_name , dif ))
   
   diflog <- sum(log(dhist$density/mhist$density)^2)/length(dhist$density)
-  mdf <- rbind( mdf , c( name[1] , "diflog" , diflog ))
+  mdf <- rbind( mdf , c( name[1] , "diflog" , model_name , diflog ))
   
   kl <- sum(dhist$density*log(dhist$density/mhist$density))
-  mdf <- rbind( mdf , c( name[1] , "kl" , kl ))
+  mdf <- rbind( mdf , c( name[1] , "kl" , model_name , kl ))
   
   return( mdf )
   

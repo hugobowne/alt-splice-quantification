@@ -41,7 +41,7 @@ filenames <- c('arabidopsis' , 'celegans' , 'chlamy_2' , 'drosophila' , 'k562_ch
 
 ###initialize data frame of interest
 ###
-mdf <- data.frame(transcriptome = NA , metric = NA , value = NA)
+mdf <- data.frame(transcriptome = NA , metric = NA , model = NA , value = NA )
 #colnames( mdf ) <- c("transcriptome", "value")
 i <- 5
 add_metrics( mdf , i , M3)
@@ -52,22 +52,28 @@ add_metrics( mdf , i , M3)
 ptm <- proc.time()
 
 for (i in 1:23){
-  for (m in c( M2 , M3 )){
-    mdf <- add_metrics( mdf , i , m)
-    print( i )
+  for (model_name in c( 'M1' , 'M2' , 'M3' )){
+    for (j in 1:20){
+      mdf <- add_metrics( mdf , i , get(model_name) , model_name)
+      print( i )
+    }
+    
   }
 }
 i
-
-add_metrics( mdf , i , M3)
-mdf1 <- mdf
-
-for (i in 1:23){
-  for (j in 1:20){
-    mdf <- add_metrics( mdf , i)
-    print( c(i,j) )
-    }
-}
+# for (i in 1:23){
+#   mdf <- add_metrics( mdf , i , M1)
+#   #print(i)
+# }
+# 
+# mdf1 <- mdf
+# i
+# for (i in 1:23){
+#   for (j in 1:20){
+#     mdf <- add_metrics( mdf , i)
+#     print( c(i,j) )
+#     }
+# }
 
 # Stop the clock
 proc.time() - ptm
