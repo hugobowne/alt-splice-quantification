@@ -43,9 +43,8 @@ filenames <- c('arabidopsis' , 'celegans' , 'chlamy_2' , 'drosophila' , 'k562_ch
 ###
 mdf <- data.frame(transcriptome = NA , metric = NA , model = NA , value = NA )
 #colnames( mdf ) <- c("transcriptome", "value")
-i <- 5
-add_metrics( mdf , i , M3)
-
+i <- 4
+add_metrics( mdf , i , M3 , 'M3')
 
 #####
 # Start the clock!
@@ -78,30 +77,46 @@ i
 # Stop the clock
 proc.time() - ptm
 
+
 mdf <- add_metrics( mdf , 5)
 
 
-save(mdf1 , file = "measures1.RData")
+save(mdf , file = "measures_all.RData")
 
 ### stats by transcriptome and measure
 
 #mean( log(dhist$density/mhist$density)^2 )
 
-testdf <- group_by(mdf , transcriptome , metric)
+testdf <- group_by(mdf , transcriptome , metric , model)
+mdf$v <- as.numeric(mdf$value)
 
 aa <- summarise(testdf , mean(v) , sd(v))
 aa$se <- aa$sd/sqrt(20)
 
-m <- ggplot( aa , aes( x = "transcriptome" , y = 'mean(v)' ) )
+a <- subset( aa ,  metric == 'dif')
+a$m <- a$`mean(v)`
+m <- ggplot( a , aes( x = transcriptome , y = m , colour = model ) )
+limits <- aes(ymax = m + se, ymin = m-se )
+m + geom_point(size=3) + geom_errorbar( limits ) + theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+  scale_colour_hue(l=100, c=250)
 
-m + geom_point()
 
-mdf$v <- as.numeric(mdf$value)
+df1 <- subset( a , model == 'M3')
+m <- ggplot( df1 , aes( x = transcriptome , y = m) )
+limits <- aes(ymax = m + se, ymin = m-se )
+m + geom_point(size=3) + geom_errorbar( limits ) + theme(axis.text.x = element_text(angle = 90, hjust = 1))
+# 
+# m <- ggplot( aa , aes( x = "transcriptome" , y = 'mean(v)' , colour = 'model') )
+# 
+# m + geom_point()
+# 
+# mdf$v <- as.numeric(mdf$value)
 
 metr = "diflog"
 df1 <- subset( aa , metric == metr )
 df1$m <- df1$`mean(v)`
-m <- ggplot( df1 , aes( x = transcriptome , y = m ) )
+m <- ggplot( df1 , aes( x = transcriptome , y = m , colour = model) )
 limits <- aes(ymax = m + se, ymin = m-se )
-m + geom_point() + geom_errorbar( limits ) + theme(axis.text.x = element_text(angle = 90, hjust = 1))
+m + geom_point(size=3) + geom_errorbar( limits ) + theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+  scale_colour_hue(l=100, c=250)
 
