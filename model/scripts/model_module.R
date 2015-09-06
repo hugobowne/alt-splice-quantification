@@ -130,7 +130,7 @@ add_metrics <- function( mdf , i , model, model_name){
   
   #mo <- model
   
-  dif <- sum((dhist$density - mhist$density)^2)/length(dhist$density)
+  dif <- sum((dhist$counts - mhist$counts)^2/(dhist$counts + 1)^2)/length(dhist$counts)
   mdf <- rbind( mdf , c( name[1] , "dif" , model_name , dif ))
   
   diflog <- sum(log(dhist$density/mhist$density)^2)/length(dhist$density)

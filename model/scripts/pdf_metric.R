@@ -44,6 +44,19 @@ filenames <- c('arabidopsis' , 'celegans' , 'chlamy_2' , 'drosophila' , 'k562_ch
 mdf <- data.frame(transcriptome = NA , metric = NA , model = NA , value = NA )
 #colnames( mdf ) <- c("transcriptome", "value")
 i <- 4
+
+for (i in 1:23){
+  mdf <- add_metrics( mdf , i , M3 , 'M3')
+  print(i)
+}
+i
+met <- subset( mdf , metric == "dif")
+
+met$v <- as.numeric(met$value)
+
+ggplot( met , aes( x = transcriptome , y = v)) + geom_point(size=3) + theme(axis.text.x = element_text(angle = 90, hjust = 1))
+
+
 add_metrics( mdf , i , M3 , 'M3')
 
 #####
