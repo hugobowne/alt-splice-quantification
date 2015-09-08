@@ -14,6 +14,7 @@ library( dplyr )
 #################################################
 ###set sources, set.seed
 #################################################
+source("model_module.R")
 source("../modules/simLL_tot.R")
 source("../modules/simul_tot.R")
 source("../modules/plotting.R")
@@ -45,8 +46,10 @@ mdf <- data.frame(transcriptome = NA , metric = NA , model = NA , value = NA )
 #colnames( mdf ) <- c("transcriptome", "value")
 i <- 4
 
+mdf <- add_rsq( mdf , i , M3 , 'M3')
+mdf
 for (i in 1:23){
-  mdf <- add_metrics( mdf , i , M3 , 'M3')
+  mdf <- add_rsq( mdf , i , M3 , 'M3')
   print(i)
 }
 i
@@ -59,15 +62,18 @@ ggplot( met , aes( x = transcriptome , y = v)) + geom_point(size=3) + theme(axis
 
 add_metrics( mdf , i , M3 , 'M3')
 
+###initialize data frame of interest
+###
+mdf <- data.frame(transcriptome = NA , metric = NA , model = NA , value = NA )
 #####
 # Start the clock!
 ptm <- proc.time()
 
 for (i in 1:23){
-  for (model_name in c( 'M1' , 'M2' , 'M3' )){
+  for (model_name in c( 'M3' )){
     for (j in 1:20){
-      mdf <- add_metrics( mdf , i , get(model_name) , model_name)
-      print( i )
+      mdf <- add_rsq( mdf , i , get(model_name) , model_name)
+      print( c(i,j) )
     }
     
   }
@@ -94,23 +100,24 @@ proc.time() - ptm
 mdf <- add_metrics( mdf , 5)
 
 
-save(mdf , file = "measures_all.RData")
+save(mdf , file = "RSQ_all.RData")
 
 ### stats by transcriptome and measure
 
 #mean( log(dhist$density/mhist$density)^2 )
 
-testdf <- group_by(mdf , transcriptome , metric , model)
 mdf$v <- as.numeric(mdf$value)
+testdf <- group_by(mdf , transcriptome , metric , model)
+
 
 aa <- summarise(testdf , mean(v) , sd(v))
 aa$se <- aa$sd/sqrt(20)
 
-a <- subset( aa ,  metric == 'dif')
+a <- subset( aa ,  metric == 'rsq')
 a$m <- a$`mean(v)`
 m <- ggplot( a , aes( x = transcriptome , y = m , colour = model ) )
 limits <- aes(ymax = m + se, ymin = m-se )
-m + geom_point(size=3) + geom_errorbar( limits ) + theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+m + geom_point(size=4 ) + geom_errorbar( limits ) + theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
   scale_colour_hue(l=100, c=250)
 
 
