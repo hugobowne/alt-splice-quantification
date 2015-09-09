@@ -29,20 +29,20 @@ h <- hist( data , breaks = 30)
 h1 <- as.data.frame(cbind(h$breaks[1:length(h$breaks)-1] +0.01, h$counts))
 ggplot( h1, aes(x = V1, y = V2)) + geom_point() + scale_x_log10() + scale_y_log10()
 
-h1$V3 <- log(h1$V1)
-h1$V4 <- log(h1$V2)
+h1$V3 <- log10(h1$V1)
+h1$V4 <- log10(h1$V2)
 ggplot( h1, aes(x = V3, y = V4)) + geom_point() 
 
 
-load( "~/Documents//alt_splice/automated/data/celegans.RData")
+load( "~/Documents//alt_splice/automated/data/arabidopsis.RData")
 df <- knPairs
 dat <- as.matrix( df$k2/df$n )
 data <- dat[dat != 0]
 
 h <- hist( data , breaks = 30)
 h2 <- as.data.frame(cbind(h$breaks[1:length(h$breaks)-1] +0.01, h$counts))
-h2$V3 <- log(h2$V1)
-h2$V4 <- log(h2$V2)
+h2$V3 <- log10(h2$V1)
+h2$V4 <- log10(h2$V2)
 ggplot( h2, aes(x = V3, y = V4)) + geom_point() + geom_smooth(method='lm',formula=y~x)
 
 load( "~/Documents//alt_splice/automated/data/lymphoblast_all.RData")
@@ -52,17 +52,25 @@ data <- dat[dat != 0]
 
 h <- hist( data , breaks = 30)
 h3 <- as.data.frame(cbind(h$breaks[1:length(h$breaks)-1] +0.01 , h$counts))
-h3$V3 <- log(h3$V1)
-h3$V4 <- log(h3$V2)
+h3$V3 <- log10(h3$V1)
+h3$V4 <- log10(h3$V2)
 ggplot( h3, aes(x = V3, y = V4)) + geom_point() + geom_smooth(method='lm',formula=y~x)
 
 h1$type <- 'k562'
-h2$type <- 'celegans'
+h2$type <- 'arabidopsis'
 h3$type <- 'lymphoblast'
 d <- rbind( h1 , h2 , h3)
 
-ggplot( d, aes(x = V3, y = V4 , colour = type)) + geom_point( size = 3 ) +
-  geom_smooth(method='lm',formula=y~x)
+ggplot( d, aes(x = V3, y = V4 , colour = type)) + geom_point( size = 5 ) +
+  geom_smooth(method='lm',formula=y~x) +
+  theme( legend.position= c( 0.85 , 0.75) , 
+         axis.text.y=element_blank() , axis.text.x=element_blank(),
+         axis.line=element_blank() , axis.title.x=element_blank() , 
+         axis.title.y=element_blank(), panel.border = element_rect(colour = "black", fill=NA, size=0))
+
+filename <- "../plots/power_hist.eps"
+ggsave( file = filename )
+
 
 plot( h , log="y", type='h')
 
