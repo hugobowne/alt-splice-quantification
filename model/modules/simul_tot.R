@@ -69,7 +69,26 @@ simulate_binomial <- function( N , f , data , s = 1){
   ##apply to matrix s to get vector of pmins
   #P <- apply( s1 , 2 , function(x) (rbinom( 1 , x[1] ,(x[2] < f)*x[3] ) + rbinom( 1 , x[1] , qpower(x[4] , b) ) )/x[1])
   #if pmin > 0.5, here we set pmin = 1 - pmin; if pmin > 1, we set pmin = 1;
-  P <- apply( data$n , 2 , function(x) rbinom( 1 , x , N))
+  P <- apply( as.matrix( data$n ) , 1 , function(x) rbinom( 1 , x , N)/x)
+  P <- (1-P)*(P>0.5)*(P<1) + P*(P<=0.5) + 0*(P>1)
+}
+
+
+simulate_M2 <- function(  data , f , s = 1){
+  ###############################################################
+  #make nice simulations i like!! and also time it.
+  #
+  ###############################################################
+  #b <- 1 - N
+  ##here we create matrix s; s[1] is data$n ; s[2] is runif to determine if bonafide splicing occurs;
+  ##s[3] is binomial prob. if bf splicing occurs; qpower(x[4] , b) is binom. prob. of splicing from
+  ##fluctuations.
+  #s1 <- rbind( rep( data$n , s )  , runif( length(data$n) ) , runif( length(data$n) ) , runif( length(data$n) ) )
+  ##apply to matrix s to get vector of pmins
+  #P <- apply( s1 , 2 , function(x) (rbinom( 1 , x[1] ,(x[2] < f)*x[3] ) + rbinom( 1 , x[1] , qpower(x[4] , b) ) )/x[1])
+  #if pmin > 0.5, here we set pmin = 1 - pmin; if pmin > 1, we set pmin = 1;
+  s1 <- rbind( rep( data$n , s )  , runif( length(data$n) ) )
+  P <- apply( s1 , 2 , function(x) rbinom( 1 , x[1] , x[2])/x[1])
   P <- (1-P)*(P>0.5)*(P<1) + P*(P<=0.5) + 0*(P>1)
 }
 

@@ -1,14 +1,14 @@
 heat_analysis <- function( file , plot = TRUE){
   #remove stuff, set directory, load data
   #rm(list=ls(all=TRUE)) 
-  setwd("~/Documents//alt_splice/automated/heat/")
+  #setwd("~/Documents//alt_splice/automated/heat/")
   load( file )
   
   
   #define parameters necessary for heatmap
   my_palette <- colorRampPalette(c("blue" , "yellow" , "red" ))(n = 49)
   LLsf <- unlist( LLs )
-  S <- 8
+  S <- 12
   ddff <- do.call("rbind", replicate(S, ddf, simplify = FALSE))
   ddff$LL <- LLsf
   
@@ -22,7 +22,7 @@ heat_analysis <- function( file , plot = TRUE){
   y <- unique( agg1$Var2 ) 
   z <-  agg1$LL
   
-  #dim( z ) <- c( 41 , 41 )
+  dim( z ) <- c( 41 , 41 )
   
   if (plot == TRUE){
     heatmap( z , Rowv = NA , Colv = NA, labRow = NA , labCol = NA , scale = "none", col=my_palette)
@@ -86,8 +86,11 @@ compare_model_density_data <- function( data , par , xlim = c(0,0.5) , logy =TRU
   
   #now make your lovely plot
   if (logy == TRUE){
-  ggplot(pmin1, aes(pmin, fill = type)) + geom_density(alpha = 0.2 ) + coord_cartesian(xlim=xlim) +
-    scale_y_log10()} else
+  ggplot(pmin1, aes(pmin, colour = type)) + geom_density(alpha = 0.2 ) + coord_cartesian(xlim=xlim) +
+    scale_y_log10() + theme(legend.position= c( 0.85 , 0.85),
+                            axis.text.y=element_blank() , axis.text.x=element_blank(),
+                            axis.line=element_blank() , axis.title.x=element_blank() , 
+                            axis.title.y=element_blank(), panel.border = element_rect(colour = "black", fill=NA, size=1))} else
     {ggplot(pmin1, aes(pmin, fill = type)) + geom_density(alpha = 0.2 ) + coord_cartesian(xlim=xlim)}
   
   

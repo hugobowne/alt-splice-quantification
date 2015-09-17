@@ -21,6 +21,8 @@ source("../modules/plotting.R")
 source("../modules/analysis_functions.R")
 
 
+load( "RSQ_all.RData" )
+
 # file = ("../data_grids/zebrafish_grid1.RData")
 # par <- heat_analysis(file, TRUE)
 #par
